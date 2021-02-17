@@ -1,0 +1,73 @@
+#!/bin/bash
+
+#Проверка существования файла с именем пользователя и паролем
+FILE_USERNAME_PASSWORD=~/.userpassportal1cru
+#
+
+### если файл существует, берем из него данные
+if [ -f $FILE_USERNAME_PASSWORD ]; then
+echo -e "\e[33mФайл c именем пользователя и паролем существует.\e[0m"
+source $FILE_USERNAME_PASSWORD
+USERNAME=$USERNAME
+PASSWORD=$PASSWORD
+#
+
+#Проверяем заполнение имени и пароля
+    if [[ -z "$USERNAME" ]];then
+        echo "Имя пользователя не указано"
+        exit 1
+    fi
+    if [[ -z "$PASSWORD" ]];then
+        echo "Пароль не указан"
+        exit 1
+    fi
+#
+else
+#Меню ввода имени и пароля
+echo -e "\e[1;31;42mВвод имени пользователя и пароля для сайта https://portal.1c.ru/ \e[0m"
+echo
+echo -n "Введите имя пользователя и нажмите [ENTER]: "
+read USERNAME
+echo -n "Введите пароль пользователя и нажмите [ENTER]:  "
+read PASSWORD
+echo
+#
+#Проверяем заполнение имени и пароля
+    if [[ -z "$USERNAME" ]];then
+        echo "Имя пользователя не указано"
+        exit 1
+    fi
+    if [[ -z "$PASSWORD" ]];then
+        echo "Пароль не указан"
+        exit 1
+    fi
+##
+
+#Меню - Сохранить имя и пароль
+echo -e "\e[1;31;42mСохранить имя и пароль\e[0m"
+echo
+PS3='Сохранить имя и пароль (нажмите цифру 1-Да, 2-Нет) : '
+echo
+select SAVE_USERNAME_PASSWORD in "Да" "Нет"
+do
+  break
+done
+#
+
+#Сохраняем имя и пароль
+    if [ $SAVE_USERNAME_PASSWORD = "Да" ]; then
+        echo USERNAME=$USERNAME >> $FILE_USERNAME_PASSWORD
+        echo PASSWORD=$PASSWORD >> $FILE_USERNAME_PASSWORD
+        echo
+        echo -e "\e[1;31mВы выбрали $SAVE_USERNAME_PASSWORD, Ваше имя и пароль сохранены.\e[0m"
+        echo
+    else
+        USERNAME=$USERNAME
+        PASSWORD=$PASSWORD
+        echo
+        echo -e "\e[1;31mВы выбрали $SAVE_USERNAME_PASSWORD, Вам придется каждый раз снова вводить имя пользователя и пароль.\e[0m"
+        echo
+    fi
+#
+fi
+###

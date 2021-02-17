@@ -1,0 +1,23 @@
+##!/bin/bash
+#Определяем в какой папке находимся
+GDEPATH=`pwd`
+
+#Директория для загрузки
+UPLOADDIR=$GDEPATH
+
+#Директория для загрузки
+UPLOADDIRPLATFORM=$UPLOADDIR/1C-Platform
+
+PAKETNAME=deb
+
+#Определяем архитектуру ядра Linux
+MACHINE_TYPE=`uname -m`
+if [ $MACHINE_TYPE == x86_64 ]; then
+    OSBITVER=64
+    MACHINETYPE=amd64
+fi
+if [ $MACHINE_TYPE == i686 ]; then
+    OSBITVER=32
+    MACHINETYPE=i386
+fi
+#

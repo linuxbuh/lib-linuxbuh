@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#Выбор битности платформы
+
+echo
+echo -e "\e[1;31;42mВыбор архитектуры сборки 1С:Предприятие 8.3\e[0m"
+echo
+PS3='Выберите (нажмите цифру - например 1): '
+echo
+select OSBIT in "64" "32"
+do
+  echo
+  echo -e "\e[1;34;4mВы выбрали $OSBIT\e[0m"
+  echo
+  break
+done
+#
+#Проверка
+if [[ -z "$OSBIT" ]];then
+    echo  -e "\e[31mВы не выбрали\e[0m"
+    exit 1
+fi
+#

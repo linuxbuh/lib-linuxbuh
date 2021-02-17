@@ -1,0 +1,109 @@
+##!/bin/bash
+
+#VERPLATFORM=$1
+#OSBIT=$2
+#Выясняем url страниц на сайте release.1c.ru
+#Заменяем точки на нижнее подчеркивание в версии платформы
+VERPLATFORM1=${VERPLATFORM//./_}
+#
+
+#Точки в версии платформы
+VERPLATFORM2=${VERPLATFORM//./}
+#
+
+#Проверка на версию платформы 1С, все что равно и выше версии 8.3.12.1469. В версии 8.3.12.1469 на сайте 1С поменяли наименование пакетов для скачивания.
+#Было наименование например client.deb64.tar.gz стало client_8_3_12_1469_deb64.tar.gz
+
+#Функция для сравнения версий
+function version_platform { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+
+
+
+#Если качаем клиент
+
+    #Сравнение версий, если версия ниже 8.3.12.1469 то качаем после else
+    if [ $(version_platform $VERPLATFORM) -ge $(version_platform "8.3.12.1469") ]; then
+
+#client_8_3_18_1289.deb64.tar.gz
+
+	#если x86_64
+	if [ ${OSBIT} == '64' ]; then
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.18.1289&path=Platform\8_3_18_1289\client_8_3_18_1289.deb64.tar.gz
+#		    # grep -m 1 искать до первого найденого значения
+		CLIENTLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\client_$VERPLATFORM1.$PAKETNAME$OSBIT.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m 1 -Po '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.18.1289&path=Platform\8_3_18_1289\deb64_8_3_18_1289.tar.gz
+		SERVERLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\${PAKETNAME}${OSBIT}_${VERPLATFORM1}.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m 1 -Po '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+        else
+
+	#если x86
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.18.1289&path=Platform\8_3_18_1289\client_8_3_18_1289.deb32.tar.gz
+		CLIENTLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\client_$VERPLATFORM1.$PAKETNAME$OSBIT.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m1 -oP '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.18.1289&path=Platform\8_3_18_1289\deb_8_3_18_1289.tar.gz
+		SERVERLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\${PAKETNAME}_${VERPLATFORM1}.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m1 -oP '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+        fi
+    #Сравнение версий, если версия ниже 8.3.12.1469 качем отсюда
+    else
+
+        if [ ${OSBIT} == '64' ]; then
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.12.1440&path=Platform\8_3_12_1440\client.deb64.tar.gz
+		CLIENTLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+	    --data-urlencode "nick=Platform83" \
+	    --data-urlencode "ver=$VERPLATFORM" \
+	    --data-urlencode "path=Platform\\$VERPLATFORM1\\client.$PAKETNAME$OSBIT.tar.gz" \
+	    https://releases.1c.ru/version_file | grep -m 1 -oP '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.12.1440&path=Platform\8_3_12_1440\deb64.tar.gz
+		SERVERLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\$PAKETNAME$OSBIT.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m 1 -oP '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+        else
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.12.1440&path=Platform\8_3_12_1440\client.deb32.tar.gz
+		CLIENTLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\client.$PAKETNAME$OSBIT.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m 1 -oP '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+#https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.12.1440&path=Platform\8_3_12_1440\deb.tar.gz
+		SERVERLINK=$(curl -s -G \
+		    -b /tmp/cookies.txt \
+		    --data-urlencode "nick=Platform83" \
+		    --data-urlencode "ver=$VERPLATFORM" \
+		    --data-urlencode "path=Platform\\$VERPLATFORM1\\$PAKETNAME.tar.gz" \
+		    https://releases.1c.ru/version_file | grep -m 1 -oP '(?<=a href=")[^"]+(?=">Скачать дистрибутив)')
+
+        fi
+
+    fi

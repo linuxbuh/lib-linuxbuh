@@ -1,0 +1,28 @@
+##!/bin/bash
+
+#Скачиваем платформу
+#VERPLATFORM=$1
+#MASHINETYPE=$2
+#OSBIT=$3
+#UPLOADDIRPLATFORM=$4
+#CLIENTLINK=$5
+#SERVERLINK=$6
+./lib-linuxbuh/lib-bash/createdir.sh $UPLOADDIRPLATFORM
+./lib-linuxbuh/lib-bash/createdir.sh $UPLOADDIRPLATFORM/$VERPLATFORM
+#mkdir $UPLOADDIRPLATFORM
+#mkdir $UPLOADDIRPLATFORM/$VERPLATFORM
+
+        echo
+        echo -e "\e[1;33;4;44mЗакачиваем клиентскую часть версии ${VERPLATFORM} для архитектуры $MASHINETYPE"
+	echo
+        curl -# --fail -b /tmp/cookies.txt -o $UPLOADDIRPLATFORM/$VERPLATFORM/${VERPLATFORM}.client$OSBIT.tar.gz -L "$CLIENTLINK"
+        echo
+        echo -e "\e[1;33;4;44mЗакачиваем серверную часть версии ${VERPLATFORM} для архитектуры $MASHINETYPE"
+        echo
+        curl -# --fail -b /tmp/cookies.txt -o $UPLOADDIRPLATFORM/$VERPLATFORM/${VERPLATFORM}.server$OSBIT.tar.gz -L "$SERVERLINK"
+        echo -e "\e[0m"
+    
+
+#удаляем файл с куки
+rm /tmp/cookies.txt
+#

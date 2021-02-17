@@ -1,0 +1,103 @@
+##!/bin/bash
+
+#Скачиваем библиотеку icu
+    wget -P $GDEPATH/AppImageBuild/$BUILDDISTR-lib/ $WGETICU
+
+#Функция для сравнения версий
+function version_platform { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+
+#Если
+
+
+
+echo "[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=1cestart
+Categories=Office;Finance;
+Name[ru_RU]=1С:Предприятие $VERPLATFORM $BUILDDISTR
+Name=1C:Enterprise $VERPLATFORM $BUILDDISTR
+Icon=1cestart" > $GDEPATH/AppImageBuild/1crestart-$VERPLATFORM-$BUILDDISTR.desktop
+
+echo "[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=~/Programs/
+Categories=Office;Finance;
+Name[ru_RU]=1С:Предприятие $VERPLATFORM $BUILDDISTR
+Name=1C:Enterprise $VERPLATFORM $BUILDDISTR
+Icon=1cestart" > /tmp/1crestart-$VERPLATFORM-$BUILDDISTR.desktop
+
+#    #Сравнение версий, если версия ниже 8.3.18.1128 то качаем после else
+if [ $(version_platform $VERPLATFORM) -ge $(version_platform "8.3.18.1128") ]; then
+
+
+echo "app: 1c-client-$VERPLATFORM-$BUILDDISTR
+
+ingredients:
+  packages:
+    - 1c-enterprise83-common
+    - 1c-enterprise83-client
+    - 1c-enterprise83-server
+    - libwebkitgtk-3.0-0
+  dist: $BUILDDISTR
+  sources:
+    - deb http://archive.ubuntu.com/ubuntu/ $BUILDDISTR main universe
+  debs:
+    - $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE/*.deb
+    - $GDEPATH/AppImageBuild/$BUILDDISTR-lib/*
+    script:
+    - $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE/*.deb
+    - $GDEPATH/AppImageBuild/$BUILDDISTR-lib/*
+
+script:
+  - mv HERE1usr/lib/x86_64-linux-gnu/* HERE1opt/1cv8/x86_64/$VERPLATFORM/
+  - # AppRun.c exports rather than just sets environment variables
+  - cat > ./AppRun <<\EOF
+  - #!/bin/sh
+  - HERE=HERE2
+  - export LD_LIBRARY_PATH=HERE1/usr/lib/x86_64-linux-gnu/:HERE1/lib/x86_64-linux-gnu/:HERE1/usr/lib/:HERE1/lib/:LDEDIT
+  - cd ""HERE3/opt/1cv8/x86_64/$VERPLATFORM""
+  - exec "./1cv8s" "$@"
+  - EOF
+  - chmod a+x ./AppRun
+  - cp $GDEPATH/lib-linuxbuh/examples/1cestart.desktop HERE41cestart.desktop
+  - cp $GDEPATH/lib-linuxbuh/examples/1cestart.png HERE41cestart.png" > $GDEPATH/AppImageBuild/1c-client-$VERPLATFORM-$BUILDDISTR.yml
+
+else
+
+echo "app: 1c-client-$VERPLATFORM-$BUILDDISTR
+
+ingredients:
+  packages:
+    - 1c-enterprise83-common
+    - 1c-enterprise83-client
+    - 1c-enterprise83-server
+    - libwebkitgtk-3.0-0
+  dist: $BUILDDISTR
+  sources:
+    - deb http://archive.ubuntu.com/ubuntu/ $BUILDDISTR main universe
+  debs:
+    - $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE/*.deb
+    - $GDEPATH/AppImageBuild/$BUILDDISTR-lib/*
+    script:
+    - $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE/*.deb
+    - $GDEPATH/AppImageBuild/$BUILDDISTR-lib/*
+
+script:
+  - mv -f HERE1usr/lib/x86_64-linux-gnu/* HERE1opt/1C/v8.3/x86_64/
+  - # AppRun.c exports rather than just sets environment variables
+  - cat > ./AppRun <<\EOF
+  - #!/bin/sh
+  - HERE=HERE2
+  - export LD_LIBRARY_PATH=HERE1/usr/lib/x86_64-linux-gnu/:HERE1/lib/x86_64-linux-gnu/:HERE1/usr/lib/:HERE1/lib/:LDEDIT
+  - cd ""HERE3/opt/1C/v8.3/x86_64""
+  - exec "./1cv8s" "$@"
+  - EOF
+  - chmod a+x ./AppRun
+  - cp $GDEPATH/lib-linuxbuh/examples/1cestart.desktop HERE41cestart.desktop
+  - cp $GDEPATH/lib-linuxbuh/examples/1cestart.png HERE41cestart.png" > $GDEPATH/AppImageBuild/1c-client-$VERPLATFORM-$BUILDDISTR.yml
+
+fi

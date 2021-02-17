@@ -1,0 +1,37 @@
+app: 1C-client-8.3.16.1876-x86_64
+#binpatch: true
+
+ingredients:
+  packages:
+    - 1c-enterprise83-common
+    - 1c-enterprise83-client
+    - 1c-enterprise83-server
+    - libwebkitgtk-3.0-0
+  dist: bionic
+  sources:
+    - deb http://archive.ubuntu.com/ubuntu/ bionic main universe
+  debs:
+    - /home/guest/1c/client-x86_64/*
+    - /home/guest/1c/lib-x86_64/*
+    script:
+    - /home/guest/1c/client-x86_64/*
+    - /home/guest/1c/lib-x86_64/*
+
+script:
+#  - ln -s "${HERE}"/opt/1C/v8.3/x86_64/1cestart "${HERE}"/usr/bin/1cestart
+#  - mv "${HERE}"opt/1C/v8.3/x86_64/* "${HERE}"usr/bin/
+  - mkdir "${HERE}"opt/1C/v83
+#  - mv -f "${HERE}"opt/1C/v8.3/x86_64/8.3.18.1289/* "${HERE}"opt/1C/v8.3/x86_64/
+#  - mv -f "${HERE}"opt/1C/1cv8/x86_64/8.3.18.1289/* "${HERE}"opt/1C/v8.3/x86_64/
+#  - mv -f "${HERE}"opt/1C/1cv8/x86_64/8.3.18.1289/* "${HERE}"opt/1C/v8.3/x86_64/
+  - cat > ./AppRun <<\EOF
+  - #!/bin/sh
+  - "$(dirname "$(readlink -f "${0}")")"="$(dirname "$(readlink -f "${0}")")"
+  - export LD_LIBRARY_PATH="${"$(dirname "$(readlink -f "${0}")")"}"/usr/lib/x86_64-linux-gnu/:"${"$(dirname "$(readlink -f "${0}")")"}"/lib/x86_64-linux-gnu/:"${"$(dirname "$(readlink -f "${0}")")"}"/usr/lib/:"${"$(dirname "$(readlink -f "${0}")")"}"/lib/:
+  - cd "${"$(dirname "$(readlink -f "${0}")")"}"/opt/1C/v8.3/x86_64
+  - exec ./1cestart
+  - EOF
+  - chmod a+x ./AppRun
+  - cp /home/guest/1c/1cestart.desktop "${HERE}"1cestart.desktop
+  - cp /home/guest/1c/1cestart.png "${HERE}"1cestart.png
+

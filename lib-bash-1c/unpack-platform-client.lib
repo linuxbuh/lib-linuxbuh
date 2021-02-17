@@ -1,0 +1,15 @@
+##!/bin/bash
+#Распаковываем платформу 1C
+echo -e "\e[1;33;4;44mРаспаковываем платформу $VERPLATFORM 1C Клиент $MASHINETYPE\e[0m"
+
+    rm -rf $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE
+    mkdir $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE
+    tar -xvf $UPLOADDIRPLATFORM/$VERPLATFORM/${VERPLATFORM}.client$OSBIT.tar.gz -C $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE
+    tar -xvf $UPLOADDIRPLATFORM/$VERPLATFORM/${VERPLATFORM}.server$OSBIT.tar.gz -C $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE
+    find $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE -name "*-thin-client-*" -exec rm {} \;
+    find $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE -name "*-thin-client*" -exec rm {} \;
+    find $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE -name "win-mac*" -exec rm {} \;
+    find $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE -name "*-ws-*" -exec rm {} \;
+    find $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE -name "*-ws_*" -exec rm {} \;
+    find $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE -name "*-crs_*" -exec rm {} \;
+    rm -rf $UPLOADDIRPLATFORM/$VERPLATFORM/$MASHINETYPE/license-tools
